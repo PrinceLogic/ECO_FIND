@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoFinds - Shopping Cart</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f8f9fa;
+            color: #2d3748;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #2d3748;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: background-color 0.2s;
+        }
+
+        .back-btn:hover {
+            background-color: #e2e8f0;
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #2d3748;
+            padding: 0.5rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Cart Items */
+        .cart-items {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-image {
+            width: 60px;
+            height: 60px;
+            background: #f7fafc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #2d3748;
+        }
+
+        .item-size {
+            color: #718096;
+            font-size: 0.875rem;
+        }
+
+        .item-price {
+            font-weight: 600;
+            color: #2d3748;
+            margin-top: 0.25rem;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quantity-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: #48bb78;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .quantity-btn:hover {
+            background: #38a169;
+        }
+
+        .quantity-btn.minus {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .quantity-btn.minus:hover {
+            background: #cbd5e0;
+        }
+
+        .quantity {
+            font-weight: 600;
+            min-width: 2rem;
+            text-align: center;
+        }
+
+        /* Order Summary */
+        .order-summary {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .summary-label {
+            color: #4a5568;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        /* Payment Method */
+        .payment-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .payment-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2d3748;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .payment-method.selected {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .payment-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-icon {
+            width: 32px;
+            height: 20px;
+            background: #4299e1;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .card-number {
+            color: #4a5568;
+        }
+
+        .change-btn {
+            background: none;
+            border: none;
+            color: #48bb78;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Checkout Button */
+        .checkout-btn {
+            width: 100%;
+            background: #48bb78;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-bottom: 1rem;
+        }
+
+        .checkout-btn:hover {
+            background: #38a169;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            background: white;
+            padding: 1rem;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            color: #718096;
+            text-decoration: none;
+            font-size: 0.75rem;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: #48bb78;
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+        }
+
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .main-content {
+                padding: 2rem;
+            }
+
+            .cart-item {
+                padding: 1.5rem 0;
+            }
+
+            .item-image {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        /* Landscape Mode Optimizations */
+        @media (orientation: landscape) and (max-height: 600px) {
+            .header {
+                padding: 0.75rem 1rem;
+            }
+
+            .main-content {
+                padding: 1rem;
+                display: grid;
+                grid-template-columns: 1fr 350px;
+                gap: 1rem;
+                max-width: none;
+            }
+
+            .left-column {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .right-column {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .cart-items {
+                flex: 1;
+                margin-bottom: 0;
+            }
+
+            .cart-item {
+                padding: 1rem 0;
+            }
+
+            .bottom-nav {
+                display: none;
+            }
+
+            .checkout-btn {
+                margin-top: auto;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .main-content {
+                display: grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 2rem;
+                align-items: start;
+            }
+
+            .left-column {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .right-column {
+                position: sticky;
+                top: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <button class="back-btn" onclick="goBack()">←</button>
+            <h1 class="header-title">EcoFinds</h1>
+        </div>
+        <button class="menu-btn">⋯</button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="left-column">
+            <!-- Cart Items -->
+            <div class="cart-items">
+                <div class="cart-item">
+                    <div class="item-image">👕</div>
+                    <div class="item-details">
+                        <div class="item-name">Cotton T-Shirt</div>
+                        <div class="item-size">Size M</div>
+                        <div class="item-price">$25.00</div>
+                    </div>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn minus" onclick="updateQuantity(0, -1)">−</button>
+                        <span class="quantity" id="qty-0">1</span>
+                        <button class="quantity-btn" onclick="updateQuantity(0, 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="cart-item">
+                    <div class="item-image">👖</div>
+                    <div class="item-details">
+                        <div class="item-name">Denim Jeans</div>
+                        <div class="item-size">Size S</div>
+                        <div class="item-price">$75.00</div>
+                    </div>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn minus" onclick="updateQuantity(1, -1)">−</button>
+                        <span class="quantity" id="qty-1">1</span>
+                        <button class="quantity-btn" onclick="updateQuantity(1, 1)">+</button>
+                    </div>
+                </div>
+
+                <div class="cart-item">
+                    <div class="item-image">👢</div>
+                    <div class="item-details">
+                        <div class="item-name">Leather Boots</div>
+                        <div class="item-size">Size 8</div>
+                        <div class="item-price">$120.00</div>
+                    </div>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn minus" onclick="updateQuantity(2, -1)">−</button>
+                        <span class="quantity" id="qty-2">1</span>
+                        <button class="quantity-btn" onclick="updateQuantity(2, 1)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <div class="summary-row">
+                    <span class="summary-label">Item Total</span>
+                    <span class="summary-value" id="item-total">$220.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Shipping</span>
+                    <span class="summary-value">$5.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Total price to pay</span>
+                    <span class="summary-value" id="total-price">$225.00</span>
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="payment-section">
+                <h3 class="payment-title">Payment Method</h3>
+                <div class="payment-method selected" onclick="selectPayment(0)">
+                    <div class="payment-info">
+                        <div class="card-icon">💳</div>
+                        <span class="card-number">•••• •••• •••• 1234</span>
+                    </div>
+                    <button class="change-btn">Change</button>
+                </div>
+                <div class="payment-method" onclick="selectPayment(1)">
+                    <div class="payment-info">
+                        <div class="card-icon">💳</div>
+                        <span class="card-number">•••• •••• •••• 5678</span>
+                    </div>
+                    <button class="change-btn">Change</button>
+                </div>
+            </div>
+
+            <!-- Checkout Button -->
+            <button class="checkout-btn" onclick="proceedToCheckout()">
+                Proceed to Checkout
+            </button>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            <span>Home</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">🔍</span>
+            <span>Explore</span>
+        </a>
+        <a href="#" class="nav-item active">
+            <span class="nav-icon">🛒</span>
+            <span>Cart</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">❤️</span>
+            <span>Wishlist</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        // Cart data
+        const cartItems = [
+            { name: 'Cotton T-Shirt', price: 25.00, quantity: 1 },
+            { name: 'Denim Jeans', price: 75.00, quantity: 1 },
+            { name: 'Leather Boots', price: 120.00, quantity: 1 }
+        ];
+
+        const shipping = 5.00;
+
+        // Update quantity function
+        function updateQuantity(index, change) {
+            const newQuantity = cartItems[index].quantity + change;
+            if (newQuantity >= 0) {
+                cartItems[index].quantity = newQuantity;
+                document.getElementById(`qty-${index}`).textContent = newQuantity;
+                updateTotals();
+            }
+        }
+
+        // Update totals
+        function updateTotals() {
+            const itemTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const totalPrice = itemTotal + shipping;
+            
+            document.getElementById('item-total').textContent = `$${itemTotal.toFixed(2)}`;
+            document.getElementById('total-price').textContent = `$${totalPrice.toFixed(2)}`;
+        }
+
+        // Select payment method
+        function selectPayment(index) {
+            document.querySelectorAll('.payment-method').forEach((method, i) => {
+                method.classList.toggle('selected', i === index);
+            });
+        }
+
+        // Navigation functions
+        function goBack() {
+            window.history.back();
+        }
+
+        function proceedToCheckout() {
+            alert('Proceeding to checkout...');
+        }
+
+        // Initialize
+        updateTotals();
+    </script>
+</body>
+</html>
